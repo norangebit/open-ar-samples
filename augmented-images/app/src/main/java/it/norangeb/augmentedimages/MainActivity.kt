@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun configureSession() {
         val config = Config(session)
-        if (!setupAugmentedImageBb(config)) {
+        if (!setupAugmentedImageDb(config)) {
             Toast.makeText(
                 this,
                 "Unable to setup augmented image database",
@@ -123,7 +123,7 @@ class MainActivity : AppCompatActivity() {
         session!!.configure(config)
     }
 
-    private fun setupAugmentedImageBb(config: Config): Boolean {
+    private fun setupAugmentedImageDb(config: Config): Boolean {
         val image = loadImage(IMAGE_FILE_NAME) ?: return false
 
         val augmentedImageDb = AugmentedImageDatabase(session)
