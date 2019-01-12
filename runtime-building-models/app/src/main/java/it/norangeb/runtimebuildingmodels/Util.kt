@@ -88,7 +88,7 @@ fun changeColorOfMaterial(
     color: Color,
     renderable: Renderable
 ) {
-    val newColor = buildMaterial(context, color) {
+    buildMaterial(context, color) {
         renderable.material = it
     }
 }
