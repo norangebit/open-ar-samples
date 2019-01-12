@@ -34,7 +34,6 @@ import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.assets.RenderableSource
 import com.google.ar.sceneform.rendering.*
 import com.google.ar.sceneform.ux.ArFragment
-import com.google.ar.sceneform.ux.TransformableNode
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -98,9 +97,9 @@ fun loadPlanet(context: Context, planet: Planet): Deferred<ModelRenderable> {
     )
 
     return GlobalScope.async(Dispatchers.IO) {
-        threadLog("start load: $planet")
+        threadLog("start loading: $planet")
         val renderable = futureRenderable.get()
-        threadLog("end load: $planet")
+        threadLog("end loading: $planet")
         renderable
     }
 }
@@ -124,14 +123,10 @@ fun fetchModel(
         .setRecenterMode(RenderableSource.RecenterMode.ROOT)
         .build()
 
-fun addTransformableNodeToScene(arFragment: ArFragment, anchor: Anchor, renderable: ModelRenderable): Node {
+fun addNodeToScene(arFragment: ArFragment, anchor: Anchor, node: Node) {
     val anchorNode = AnchorNode(anchor)
-    val transformableNode = TransformableNode(arFragment.transformationSystem)
-    transformableNode.renderable = renderable
-    transformableNode.setParent(anchorNode)
+    anchorNode.addChild(node)
     arFragment.arSceneView.scene.addChild(anchorNode)
-    transformableNode.select()
-    return transformableNode
 }
 
 enum class Planet(val value: String) {
@@ -149,4 +144,4 @@ enum class Planet(val value: String) {
 fun threadLog(message: String) = Log.d(
     "COROUTINES",
     "[${Thread.currentThread().name}]: $message"
-    )
+)
