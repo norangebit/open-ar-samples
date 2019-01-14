@@ -72,14 +72,14 @@ fun buildShape(
     shape: Shape,
     material: Material
 ): ModelRenderable {
-    val dimension = Vector3(0.1f, 0.1f, 0.1f)
+    val center = Vector3(0.0f, 0.0f, 0.0f)
     return when (shape) {
         Shape.CUBE -> ShapeFactory
-            .makeCube(dimension, Vector3(0.0f, 0.0f, 0.0f), material)
+            .makeCube(Vector3(0.2f, 0.2f, 0.2f), center, material)
         Shape.CYLINDER -> ShapeFactory
-            .makeCylinder(0.1f, 0.3f, Vector3(0.0f, 0.0f, 0.0f), material)
+            .makeCylinder(0.1f, 0.2f, center, material)
         Shape.SPHERE -> ShapeFactory
-            .makeSphere(0.1f, dimension, material)
+            .makeSphere(0.1f, center, material)
     }
 }
 
