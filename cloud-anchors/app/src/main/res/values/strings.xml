@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">cloud anchors</string>
+    <string name="action_settings">Settings</string>
+    <string name="clear">Clear</string>
+    <string name="resolve">resolve</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="resolve_dialog_title">Resolve Anchor</string>
+</resources>
