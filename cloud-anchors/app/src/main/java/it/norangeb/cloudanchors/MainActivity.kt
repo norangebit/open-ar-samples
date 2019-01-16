@@ -144,6 +144,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onClearClick(view: View) {
+        cloudAnchor?.detach()
         cloudAnchor = null
         cloudAnchorState = CloudAnchorState.LOCAL
     }
