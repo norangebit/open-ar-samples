@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity() {
 
         GlobalScope.launch(Dispatchers.Main) {
             loadPlanetsJob.join()
+
             val solarSystem = createSolarSystem(renderablePlanets)
             addNodeToScene(arFragment, hitResult.createAnchor(), solarSystem)
             isModelAdded = true

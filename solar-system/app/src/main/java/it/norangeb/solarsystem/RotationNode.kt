@@ -22,32 +22,20 @@ package it.norangeb.solarsystem
 
 import android.animation.ObjectAnimator
 import android.view.animation.LinearInterpolator
-import com.google.ar.sceneform.FrameTime
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.math.QuaternionEvaluator
 import com.google.ar.sceneform.math.Vector3
 
-class RotationNode(private val isOrbit: Boolean = true) : Node() {
-    val SPEED_MULTIPLIER = 1
-    val ROTATION_MULTIPLIER = 1
+class RotationNode : Node() {
+    private val DEGREE = 360000
 
     private var orbitAnimation: ObjectAnimator? = null
     var degreesPerSecond = 90.0f
 
     private val animationDuration: Long
-        get() = (1000 * 360 / (degreesPerSecond * if (isOrbit)
-            SPEED_MULTIPLIER
-        else
-            ROTATION_MULTIPLIER))
+        get() = (DEGREE / degreesPerSecond)
             .toLong()
-
-    override fun onUpdate(frameTime: FrameTime?) {
-        super.onUpdate(frameTime)
-
-        if (orbitAnimation == null)
-            return
-    }
 
     override fun onActivate() {
         startAnimation()
@@ -58,9 +46,9 @@ class RotationNode(private val isOrbit: Boolean = true) : Node() {
     }
 
     private fun startAnimation() {
-        if (orbitAnimation != null) {
+        if (orbitAnimation != null)
             return
-        }
+
         orbitAnimation = createAnimator()
         orbitAnimation!!.target = this
         orbitAnimation!!.duration = animationDuration
@@ -68,21 +56,19 @@ class RotationNode(private val isOrbit: Boolean = true) : Node() {
     }
 
     private fun stopAnimation() {
-        if (orbitAnimation == null) {
+        if (orbitAnimation == null)
             return
-        }
+
         orbitAnimation!!.cancel()
         orbitAnimation = null
     }
 
     private fun createAnimator(): ObjectAnimator {
-        val orientation1 = Quaternion.axisAngle(Vector3(0.0f, 1.0f, 0.0f), 0f)
-        val orientation2 = Quaternion.axisAngle(Vector3(0.0f, 1.0f, 0.0f), 120f)
-        val orientation3 = Quaternion.axisAngle(Vector3(0.0f, 1.0f, 0.0f), 240f)
-        val orientation4 = Quaternion.axisAngle(Vector3(0.0f, 1.0f, 0.0f), 360f)
+        val orientations = arrayOf(0f, 120f, 240f, 360f)
+            .map { Quaternion.axisAngle(Vector3(0.0f, 1.0f, 0.0f), it) }
 
         val orbitAnimation = ObjectAnimator()
-        orbitAnimation.setObjectValues(orientation1, orientation2, orientation3, orientation4)
+        orbitAnimation.setObjectValues(*orientations.toTypedArray())
 
         orbitAnimation.propertyName = "localRotation"
 

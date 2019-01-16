@@ -20,7 +20,6 @@
 
 package it.norangeb.solarsystem
 
-import com.google.ar.sceneform.FrameTime
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.ModelRenderable
@@ -28,7 +27,7 @@ import com.google.ar.sceneform.rendering.ModelRenderable
 class PlanetNode(
     private val planetRenderable: ModelRenderable
 ) : Node() {
-    private val planetScale = 0.6f
+    private val PLANET_SCALE = 0.6f
     private var planetVisual: RotationNode? = null
 
     override fun onActivate() {
@@ -37,18 +36,12 @@ class PlanetNode(
 
         if (planetVisual == null)
             initRotationNode()
-
     }
 
-    override fun onUpdate(frameTime: FrameTime?) {
-        if (scene == null)
-            return
-    }
-
-    fun initRotationNode() {
-        planetVisual = RotationNode(false)
+    private fun initRotationNode() {
+        planetVisual = RotationNode()
         planetVisual?.setParent(this)
         planetVisual?.renderable = planetRenderable
-        planetVisual?.localScale = Vector3(planetScale, planetScale, planetScale)
+        planetVisual?.localScale = Vector3(PLANET_SCALE, PLANET_SCALE, PLANET_SCALE)
     }
 }
