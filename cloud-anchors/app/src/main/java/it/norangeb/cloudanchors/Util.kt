@@ -29,12 +29,8 @@ import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import com.google.ar.core.Anchor
-import com.google.ar.core.Session
-import com.google.ar.core.Trackable
-import com.google.ar.core.TrackingState
 import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.Node
-import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.*
 import com.google.ar.sceneform.ux.ArFragment
 import com.google.ar.sceneform.ux.TransformableNode
@@ -62,10 +58,6 @@ fun checkIsSupportedDeviceOrFinish(activity: Activity, tag: String): Boolean {
     return true
 }
 
-operator fun ArFragment.invoke(λ: ArFragment.() -> Unit) = λ()
-
-fun isTrackig(trackable: Trackable) = trackable.trackingState == TrackingState.TRACKING
-
 fun buildRenderable(
     context: Context,
     model: Uri,
@@ -81,55 +73,6 @@ fun buildRenderable(
         }
 }
 
-fun buildMaterial(
-    context: Context,
-    color: Color,
-    onSuccess: (material: Material) -> Unit
-) {
-    MaterialFactory
-        .makeOpaqueWithColor(context, color)
-        .thenAccept(onSuccess)
-}
-
-fun changeColorOfMaterial(
-    context: Context,
-    color: Color,
-    renderable: Renderable
-) {
-    val newColor = buildMaterial(context, color) {
-        renderable.material = it
-    }
-}
-
-
-/**
-fun buildRenderable(
-    context: Context,
-    model: RenderableSource,
-    modelUri: Uri,
-    onSuccess: (renderable: Renderable) -> Unit
-) {
-    ModelRenderable.builder()
-        .setRegistryId(modelUri)
-        .setSource(context, model)
-        .build()
-        .thenAccept(onSuccess)
-        .exceptionally {
-            Log.e("SCENEFORM", "unable to load model", it)
-            return@exceptionally null
-        }
-}
-
-fun fetchModel(
-    context: Context,
-    source: Uri
-) : RenderableSource {
-    return RenderableSource.builder()
-        .setSource(context, source, RenderableSource.SourceType.GLTF2)
-        .setRecenterMode(RenderableSource.RecenterMode.ROOT)
-        .build()
-}
-*/
 
 fun addTransformableNodeToScene(arFragment: ArFragment, anchor: Anchor, renderable: Renderable): Node {
     val anchorNode = AnchorNode(anchor)
@@ -142,7 +85,7 @@ fun addTransformableNodeToScene(arFragment: ArFragment, anchor: Anchor, renderab
 }
 
 enum class CloudAnchorState {
-    LOCAL,
+    NONE,
     HOSTING,
     HOSTED,
     RESOLVING,

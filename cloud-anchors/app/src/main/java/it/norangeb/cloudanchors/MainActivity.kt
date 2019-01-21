@@ -36,8 +36,8 @@ class MainActivity : AppCompatActivity() {
     private val TAG = MainActivity::class.java.canonicalName
 
     private lateinit var arFragment: CloudArFragment
-    private lateinit var storageManager: StorageManager
-    private var cloudAnchorState = CloudAnchorState.LOCAL
+    private val cloudAnchorsHelper = CloudAnchorsHelper()
+    private var cloudAnchorState = CloudAnchorState.NONE
     private var cloudAnchor: Anchor? = null
         set(value) {
             field?.detach()
@@ -50,8 +50,6 @@ class MainActivity : AppCompatActivity() {
         if (!checkIsSupportedDeviceOrFinish(this, TAG))
             return
 
-        storageManager = StorageManager(this)
-
         setContentView(R.layout.activity_main)
 
         arFragment = supportFragmentManager.findFragmentById(R.id.ar_fragment) as CloudArFragment
@@ -63,7 +61,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addModel(hitResult: HitResult, plane: Plane, motionEvent: MotionEvent) {
-        if (cloudAnchorState != CloudAnchorState.LOCAL)
+        if (cloudAnchorState != CloudAnchorState.NONE)
             return
 
         cloudAnchor = arFragment.arSceneView.session
@@ -90,7 +88,7 @@ class MainActivity : AppCompatActivity() {
 
         if (cloudState.isError) {
             toastError()
-            cloudAnchorState = CloudAnchorState.LOCAL
+            cloudAnchorState = CloudAnchorState.NONE
             return
         }
 
@@ -98,29 +96,25 @@ class MainActivity : AppCompatActivity() {
             return
 
         if (cloudAnchorState == CloudAnchorState.HOSTING)
-            checkHosting(cloudState)
+            checkHosting()
         else
-            checkResolving(cloudState)
+            checkResolving()
     }
 
-    private fun checkResolving(state: Anchor.CloudAnchorState) {
+    private fun checkResolving() {
         Toast.makeText(this, "Anchor resolved!", Toast.LENGTH_LONG)
             .show()
         cloudAnchorState = CloudAnchorState.RESOLVED
     }
 
-    private fun checkHosting(state: Anchor.CloudAnchorState) {
-        storageManager.nextShortCode { shortCode ->
-            if (shortCode == null) {
-                toastError()
-                return@nextShortCode
-            }
-            storageManager.storeUsingShortCode(shortCode, cloudAnchor?.cloudAnchorId)
+    private fun checkHosting() {
+        val cAnchor = cloudAnchor ?: return
 
-            Toast.makeText(this, "Anchor hosted with code $shortCode", Toast.LENGTH_LONG)
-                .show()
-            Log.d("NORANGEBIT", "$shortCode")
-        }
+        val shortCode = cloudAnchorsHelper.getShortCode(cAnchor.cloudAnchorId)
+
+        Toast.makeText(this, "Anchor hosted with code $shortCode", Toast.LENGTH_LONG)
+            .show()
+        Log.d("NORANGEBIT", "$shortCode")
 
         cloudAnchorState = CloudAnchorState.HOSTED
     }
@@ -130,8 +124,8 @@ class MainActivity : AppCompatActivity() {
             .show()
 
     private fun onResolveOkPressed(dialogValue: String) {
-        val shortCode = Integer.parseInt(dialogValue)
-        storageManager.getCloudAnchorID(shortCode) {
+        val shortCode = dialogValue.toInt()
+        cloudAnchorsHelper.getCloudAnchorId(shortCode) {
             cloudAnchor = arFragment.arSceneView.session
                 .resolveCloudAnchor(it)
 
@@ -146,7 +140,7 @@ class MainActivity : AppCompatActivity() {
     fun onClearClick(view: View) {
         cloudAnchor?.detach()
         cloudAnchor = null
-        cloudAnchorState = CloudAnchorState.LOCAL
+        cloudAnchorState = CloudAnchorState.NONE
     }
 
     fun onResolveClick(view: View) {
