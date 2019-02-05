@@ -1,6 +1,6 @@
 # Augmented images
 
-ARCore and Sceneform made with Augmented Image to show a virtual earth.
+ARCore and Sceneform project made with Augmented Image to show a virtual earth.
 
 ## Credit
 
